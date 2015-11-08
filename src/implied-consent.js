@@ -269,8 +269,8 @@
   /**
    * Parse init code if it was issued before the script is loaded.
    *
-   * The script can be initialised via creating the `impliedConsent` object and
-   * the `impliedConsent.q` array and by pushing the init comand into it.
+   * The script can be initialised via creating the `ic` object and the `ic.q`
+   * array and by pushing the init comand into it.
    */
   function run() {
     // Set context.
@@ -278,29 +278,33 @@
     var queue;
 
     // Set up command queue if not set already.
-    root.impliedConsent = root.impliedConsent || {};
-    root.impliedConsent.q = root.impliedConsent.q || [];
+    root.ic = root.ic || {};
+    root.ic.q = root.ic.q || [];
 
     // Set any initial queue items aside.
-    queue = root.impliedConsent.q;
+    queue = root.ic.q;
 
     // Implement our own push.
-    root.impliedConsent.q.push = function(item) {
-      if (ic.status || !(item instanceof Array) || !item[0] || typeof ic[item[0]] !== 'function') {
+    root.ic.q.push = function(item) {
+      if (ic.status ||
+          (Object.prototype.toString.call(item) !== '[object Arguments]') ||
+          !item[0] ||
+          typeof ic[item[0]] !== 'function') {
+
         return false;
       }
-      var args = item[1] || {};
-      ic[item[0]].apply(this, [args]);
+
+      ic[item[0]].apply(this, [item[1] || {}]);
     };
 
     // Process initial queue items.
     if (queue instanceof Array) {
-      forEach(queue, root.impliedConsent.q.push);
+      forEach(queue, root.ic.q.push);
     }
   }
 
   run();
 
-  exports.impliedConsent = ic;
+  exports.ic = ic;
 
 }(typeof exports === 'object' && exports || this));

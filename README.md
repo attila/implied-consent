@@ -23,39 +23,42 @@ file is being served as text/plain and as such being blocked in Internet
 Explorer on Windows 7 for instance (because of the wrong MIME type). Bottom
 line: GitHub is not a CDN.
 
-Add the following code to the head of your page:
+Add the following code to the head of your page – with the correct path to the
+script:
 
-```js
+```html
 <script>
-  var impliedConsent = impliedConsent || {}; impliedConsent.q = impliedConsent.q || [];
-  impliedConsent.q.push(['init']);
-
-  (function(w, d) {
-    var s = d.createElement('script'), el = d.getElementsByTagName('script')[0]; s.async = true;
-    s.src = '//example.com/implied-consent.min.js'; el.parentNode.insertBefore(s, el);
-  })(this, this.document);
+(function(w,d,s,u,r,a,m){
+  w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)},a=d.createElement(s),
+  m=d.getElementsByTagName(s)[0];a.async=1;a.src=u;m.parentNode.insertBefore(a,m)
+})(this,document,'script','//example.com/implied-consent.min.js','ic');
+ic('init');
 </script>
 ```
 
-If only modern browsers are planned to be supported, load it via an asynchronous script tag:
+If only modern browsers are planned to be supported, load it via an asynchronous
+script tag. This is recommended if the script will be included in an aggregated
+bundle:
 
-```js
+```html
 <script>
-  var impliedConsent = impliedConsent || {}; impliedConsent.q = impliedConsent.q || [];
-  impliedConsent.q.push(['init']);
+(function(w,d,r){
+  w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}
+})(this,document,'ic');
+ic('init');
 </script>
 
 <script async src="//example.com/implied-consent.min.js"></script>
 ```
 
-It is possible to define custom configuration options in the `impliedConsent.q.push()` call:
+It is possible to define custom configuration options in the `ic('init')` call:
 
 ```js
-impliedConsent.q.push(["init", {
+ic('init', {
   noticeText: 'We use cookies as set out in our <a href="http://www.example.com/cookie-policy">cookie policy</a>. By using this website, you agree we may place these cookies on your device.',
-  confirmText: "Close",
+  confirmText: 'Close',
   cookieExpiresIn: 3650
-}]);
+});
 ```
 
 See configuration options below.

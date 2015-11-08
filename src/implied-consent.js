@@ -109,6 +109,10 @@
    * @see @defaults
    */
   ic.init = function(options) {
+    if (ic.status) {
+      return false;
+    }
+
     // Merge defaults with passed options.
     config = aug(defaults, options);
 
@@ -123,6 +127,23 @@
         render();
       });
     }
+  };
+
+  /**
+   * Remove any event listeners set and the notice container.
+   */
+  ic.destroy = function () {
+    var button = document.querySelector('#__ic-continue-button');
+
+    button.removeEventListener('click', buttonHandler);
+    ic.delegate && ic.delegate.destroy();
+
+    // Destroy notice element.
+    var el = document.querySelector('#__ic-notice-container');
+    el.parentElement.removeChild(el);
+    ic.status = false;
+
+    return ic.status;
   };
 
   /**
@@ -173,7 +194,7 @@
    */
   function agree() {
     Cookies.set(config.cookieNamePrefix + hostname, 'true');
-    destroy();
+    ic.destroy();
   }
 
   /**
@@ -253,20 +274,6 @@
   }
 
   /**
-   * Remove any event listeners set and the notice container.
-   */
-  function destroy() {
-    var button = document.querySelector('#__ic-continue-button');
-    button.removeEventListener('click', buttonHandler);
-    ic.delegate && ic.delegate.destroy();
-
-    // Destroy notice element.
-    var el = document.querySelector('#__ic-notice-container');
-    el.parentElement.removeChild(el);
-    ic.status = false;
-  }
-
-  /**
    * Parse init code if it was issued before the script is loaded.
    *
    * The script can be initialised via creating the `ic` object and the `ic.q`
@@ -286,8 +293,7 @@
 
     // Implement our own push.
     root.ic.q.push = function(item) {
-      if (ic.status ||
-          (Object.prototype.toString.call(item) !== '[object Arguments]') ||
+      if (Object.prototype.toString.call(item) !== '[object Arguments]' ||
           !item[0] ||
           typeof ic[item[0]] !== 'function') {
 

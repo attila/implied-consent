@@ -1,8 +1,8 @@
 {
   "name": "implied-consent",
-  "version": "0.3.0",
+  "version": "1.1.0",
   "private": true,
-  "homepage": "https://github.com/dennisinteractive/implied-consent",
+  "homepage": "https://github.com/attila/implied-consent",
   "authors": [
     "Attila Beregszaszi <attila@frontseed.com>"
   ],
@@ -16,6 +16,6 @@
     "tests"
   ],
   "dependencies": {
-    "eventlistener-polyfill": "~1.0.0"
+    "eventlistener-polyfill": "1.0.0"
   }
 }
